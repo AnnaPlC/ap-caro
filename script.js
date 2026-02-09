@@ -1278,4 +1278,11 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 
+// Safari-only: remove foreignObject videos (prevents stuck frames in SVG)
+
+document.addEventListener('DOMContentLoaded', () => {
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) && !!window.safari;
+  if (!isSafari) return;
+  document.querySelectorAll('.ligatures .flight-fo').forEach((fo) => fo.remove());
+});
 
