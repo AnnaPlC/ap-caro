@@ -5,6 +5,17 @@
     box-sizing: border-box;
 }
 
+@font-face {
+  font-family: "Caro";
+  src:
+    url("./font/caro.woff2") format("woff2"),
+    url("./font/caro.woff") format("woff"),
+    url("./font/caro.ttf") format("truetype");
+  font-weight: 100 900; /* si és variable; si no ho és, igualment no molesta */
+  font-style: normal;
+  font-display: swap;
+}
+
 ::selection {
     background-color: #5d30ff;
 }
