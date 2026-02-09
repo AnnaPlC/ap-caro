@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Caro';
+    src: url('Untitled.eot');
+    src: url('Untitled.eot?#iefix') format('embedded-opentype'),
+        url('Untitled.woff2') format('woff2'),
+        url('Untitled.woff') format('woff'),
+        url('Untitled.ttf') format('truetype'),
+        url('Untitled.svg#Untitled') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+

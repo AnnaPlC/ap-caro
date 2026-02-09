@@ -1,0 +1,3407 @@
+*,
+::before,
+::after {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+::selection {
+    background-color: #5d30ff;
+}
+
+:root {
+    /*--color-primari: #f3f3f3;*/
+
+    --color-primari: #262626;
+    /*--color-primari: #000;*/
+
+    /*--gray-color: #161616;*/
+    --gray-color: #dedede;
+    /*--gray-color: #cecece;*/
+
+    --padding-container: 80px 0;
+    /*--nav-height: 64px;*/
+
+    /* Secció tester */
+    --bg: #d9d9d9;
+    --ink: #262626;
+    --frame: #fff;
+    --border: #8f8f8f;
+    --tile: transparent; /* base tile background for glyphs */
+    --hover: #e5e5e5;    /* hover background for glyphs */
+    --rule: #262626;     /* footer rule color */
+
+    /* Live-typed variables (driven by JS) */
+    --font-size: 72px; /* px */
+    --tracking: 0em; /* em */
+    --line-height: 1.05; /* unitless */
+    --pad-x: 20px;
+    --pad-y: 44px;
+    /* Secció tester */
+
+    /*
+    --color-primari: blue;
+    --color-secundari: #dfdfdf;
+    --color-terciari: #f2f2f2;
+    --bordes: 3px solid var(--color-terciari);
+    */
+}
+
+/* Light theme overrides: set this on the root element with */
+/*    document.documentElement.setAttribute('data-theme','light') */
+[data-theme="dark"] {
+    --color-primari: #ededed;
+    --gray-color: #000000;
+    /* Tester & UI variables inversion */
+    --bg: #000000;
+    /* --bg: #101010; */
+    --ink: #ededed;
+    --frame: #000000;
+    --border: #a5a5a5;
+    --tile: #000000;
+    --hover: #000000;
+    --rule: #000000;
+}
+
+/* Override hero_figure background in dark theme */
+[data-theme="dark"] .hero_figure {
+    background-color: #444444;
+
+}
+
+/* Invert inline SVG fills that are hard-coded to black in dark theme
+   — apply ONLY to the Qq inline SVG (.vector_image). */
+[data-theme="dark"] .vector_image [fill="#262626"],
+[data-theme="dark"] .vector_image [stroke="#262626"] {
+    fill: #ededed !important;
+    /* stroke: #ededed !important; */
+}
+
+/* Also invert the inline-injected baselines SVG (desktop/tablet) */
+[data-theme="dark"] svg.baselines_image [fill="#262626"],
+[data-theme="dark"] svg.baselines_image [stroke="#262626"] {
+    fill: #ededed !important;
+    stroke: #ededed !important;
+}
+
+/* Do NOT invert these design feature circles in dark mode */
+[data-theme="dark"] .design_features .cercle_93 *,
+[data-theme="dark"] .design_features .cercle_88 *,
+[data-theme="dark"] .design_features .cercle_89 * {
+    /* Explicitly keep these Hh circles black in dark mode */
+    fill: #262626 !important;
+    stroke: #262626 !important;
+}
+
+/* Poster greetings card: invert bg/text in dark mode */
+[data-theme="dark"] .poster_figure_greetings {
+    background-color: #ededed;
+}
+[data-theme="dark"] .paragraph_greetings {
+    color: #262626;
+}
+
+/* Poster capture button: ensure it inverts */
+[data-theme="dark"] .poster_capture {
+    color: var(--color-primari);
+}
+
+/* Poster heart icon: ensure it inverts in dark mode */
+[data-theme="dark"] .poster_heart {
+    color: var(--color-primari);
+}
+
+/* Tester icons (PNG/SVG images): invert via filter in dark mode */
+[data-theme="dark"] .iconbtn img,
+[data-theme="dark"] .pangram__icon {
+    filter: invert(1) brightness(1.1);
+}
+
+/* Character-set preview glyph: ensure it follows theme ink */
+[data-theme="dark"] .preview__glyph {
+    color: var(--ink);
+}
+
+/* Footer Get Font spans: explicitly invert */
+[data-theme="dark"] .getfont__text,
+[data-theme="dark"] .getfont__arrow {
+    color: var(--color-primari);
+}
+
+/* smooth scrolling for in-page anchors */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Maquetem tot per a mòbil - mobile first - i a partir d'aquí treballarem en les mediaqueries per a dispositius més grans */
+
+body,
+input,
+textarea,
+button,
+title {
+    font-family: "Caro", sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    font-optical-sizing: auto;
+    color: var(--color-primari);
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--gray-color);
+    /* leave space for fixed nav */
+    padding-top: 45px;
+}
+
+/* Hide hero/nav until hero reveal when running the coords overlay stage */
+body.pre-hero .nav { visibility: hidden; }
+body.pre-hero .hero { visibility: hidden; }
+/* Keep long paragraph hidden until hero is revealed */
+body.pre-hero .paragraph_description { visibility: hidden; }
+/* Paragraph and nav should appear immediately once hero is revealed */
+
+/* Prevent scrolling while the coords overlay is visible */
+body.has-overlay { overflow: hidden; }
+
+/* ---------------------- Hero ------------------------ */
+.title {
+    font-size: clamp(1rem, 2vw + 1rem, 2rem);
+    line-height: 3rem;
+    /*overflow: hidden;*/
+}
+
+/* (animate-on-scroll removed - reverted) */
+
+.logo_link {
+    text-decoration: none;
+    color: var(--nav-color, var(--color-primari));
+}
+
+.hero {
+    height: 66vh;
+}
+
+.nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    /* make nav fixed to top */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    padding: 0 20px;
+    /* keep nav transparent as requested */
+    background-color: transparent;
+    z-index: 1000;
+    /* default nav ink color follows theme unless overridden via data-color */
+    --nav-color: var(--color-primari);
+}
+
+/* ---------------- Loading overlay ---------------- */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000; /* above nav */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gray-color);
+    opacity: 1;
+    /* Base scale + smooth zoom transitions to mimic "zoom-start" feel */
+    transform: scale(1);
+    transition: opacity 400ms ease, transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.loading-overlay.zoom-start {
+    /* Slightly zoomed on init, as seen in exat.hottype.co */
+    transform: scale(1.03);
+}
+.loading-overlay.is-hidden {
+    opacity: 0;
+    /* Zoom tail as it fades out */
+    transform: scale(0.98);
+    pointer-events: none;
+}
+.loading-icon {
+    width: 60px;
+    height: 60px;
+    /* 4 frames with per-frame: 300ms delay hold + 200ms linear transition */
+    animation-name: loaderFrames;
+    animation-duration: 2000ms; /* 4 × (300ms + 200ms) */
+    animation-timing-function: linear;
+    animation-delay: 300ms; /* initial delay before first frame */
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+}
+/* Keyframe timeline with dwell (hold) then transition per frame */
+@keyframes loaderFrames {
+    /* Frame 1: 0deg → hold for 300ms (15% of total), then transition to 90deg by 25% */
+    0%  { transform: rotate(0deg); }
+    15% { transform: rotate(0deg); }
+    25% { transform: rotate(90deg); }
+
+    /* Frame 2: 90deg → hold until 40%, then transition to 180deg by 50% */
+    25% { transform: rotate(90deg); }
+    40% { transform: rotate(90deg); }
+    50% { transform: rotate(180deg); }
+
+    /* Frame 3: 180deg → hold until 65%, then transition to 270deg by 75% */
+    50% { transform: rotate(180deg); }
+    65% { transform: rotate(180deg); }
+    75% { transform: rotate(270deg); }
+
+    /* Frame 4: 270deg → hold until 90%, then transition to 360deg by 100% */
+    75% { transform: rotate(270deg); }
+    90% { transform: rotate(270deg); }
+    100%{ transform: rotate(360deg); }
+}
+
+/* Prevent scrolling while loader is visible */
+body.has-loader { overflow: hidden; }
+
+.logo_link-toggle {
+    background-image: url(assets/toggle_light.svg);
+    width: 24px;
+    height: 24px;
+    margin-bottom: 3px;
+    background-size: 22px;
+    background-repeat: no-repeat;
+    display: flex;
+    background-position: center;
+}
+
+/* When dark theme is active, swap the toggle icon (provide assets/toggle_dark.svg) */
+[data-theme="dark"] .logo_link-toggle {
+    background-image: url(assets/toggle_dark.svg);
+}
+
+.cta_try {
+    text-decoration: none;
+    color: var(--nav-color, var(--color-primari));
+}
+/* Nav ink overrides driven by JS based on background detection */
+.nav[data-color="light"] {
+    --nav-color: #ededed; /* light ink on dark backgrounds */
+}
+.nav[data-color="dark"] {
+    --nav-color: #262626; /* dark ink on light backgrounds */
+}
+
+.cta_try:hover {
+    /*font-weight: 700;*/
+    border-bottom: 2.6px solid #262626;
+    /*transition: ease-in 0.2s;*/
+}
+
+.cta_try::after {
+    /*content: url("/shared-assets/images/examples/warning.svg");*/
+    content: "→";
+    padding-left: 8px;
+}
+
+.nav-right {
+    width: 45vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title_hero {
+    text-transform: uppercase;
+    font-size: clamp(1rem, 1vw + 1rem, 1.8rem);
+}
+
+.title_container {
+    /*padding-top: 120px;*/
+    word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /*height: 70vh;*/
+    /*height: 68vh;*/
+    height: 66vh;
+    justify-content: center;
+    /*padding-top: 15vh;*/
+    /*background-color: antiquewhite;*/
+    gap: 6.5vh;
+}
+
+.title_main {
+    font-size: clamp(9rem, 6vw + 1rem, 6rem);
+    line-height: clamp(6.8rem, 6vw + 1rem, 6rem);
+}
+
+.paragraph {
+    /*background-color: bisque;*/
+    font-size: 1.4em;
+    line-height: 1.5em;
+    /*letter-spacing: -0.2px;*/
+}
+
+.container {
+    padding: 20px;
+    overflow: hidden;
+}
+
+/* Poster heart icon: ensure consistent black color across platforms */
+.poster_heart {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    margin-left: 1px;
+    color: #262626; /* force black heart regardless of theme */
+}
+.poster_heart__svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+}
+
+.columna_1_text {
+    font-size: 200px;
+    position: relative;
+    top: 75px;
+    /*word-break: break-word;*/
+}
+
+.columna {
+    display: flex;
+    flex-direction: column;
+    /*background-color: green;*/
+    height: 30vh;
+    justify-content: space-between;
+}
+
+.columnes {
+    display: flex;
+    flex-direction: column;
+    padding-top: 140px;
+    gap: 10vh;
+    /*height: 60vh;*/
+    /*background-color: antiquewhite;*/
+    /*margin-bottom: 50px;*/
+    /*align-items: space-between;*/
+}
+
+.columna_2_text_mobile {
+    font-size: 40px;
+    line-height: 1.35;
+    /*word-break: break-word;*/
+}
+.columna_2_text_desktop {
+    font-size: 40px;
+    line-height: 1.35;
+    /*word-break: break-word;*/
+    display: none;
+}
+
+.columna_2_text_desktop_big {
+    font-size: 40px;
+    line-height: 1.35;
+    /*word-break: break-word;*/
+    display: none;
+}
+
+.columna_3_text_mobile {
+    font-size: 20px;
+    line-height: 1.6;
+}
+.columna_3_text_desktop {
+    font-size: 20px;
+    line-height: 1.6;
+    display: none;
+}
+
+.columna_3_text_desktop_big {
+    font-size: 20px;
+    line-height: 1.6;
+    display: none;
+}
+
+.columna_size_1 {
+    font-size: 14px;
+    /*position: relative;*/
+    /*bottom: 100px;*/
+}
+
+.columna_size_2 {
+    font-size: 14px;
+    /*position: relative;*/
+    /*bottom: 50px;*/
+}
+.columna_size_3 {
+    font-size: 14px;
+    /*position: relative;*/
+    /*bottom: 50px;*/
+}
+
+.size {
+    padding-top: 200px;
+}
+
+/* Removed empty size_* rules (legacy comments only) */
+
+.hero_figure {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 66%;
+    height: 50vh;
+    background-image: url(assets/img/danholdsworth-485-q80-w1350-h900-rz3-b75.jpg);
+    /*background-color: white;*/
+    /*background-color: #b0b0b0;*/
+    transform: rotate(15deg);
+    background-size: cover;
+    background-position: center;
+    /*opacity: 0%;*/
+    z-index: -1;
+    display: none;
+}
+
+.poster {
+    display: flex;
+    flex-direction: column;
+    /*background-color: antiquewhite;*/
+    width: 100%;
+    /*height: 100vh;*/
+    /*overflow: hidden;*/
+    padding: 20px 0;
+    margin-bottom: 100px;
+}
+
+/* Removed empty poster_container rule (legacy comment) */
+
+.poster_paragraph {
+    text-align: center;
+    font-size: clamp(3.8rem, 7vw + 1rem, 6rem);
+    line-height: clamp(4rem, 6vw + 1rem, 6rem);
+}
+.alt-a {
+    font-family: "Caro";
+    font-feature-settings: "ss04" 1;
+}
+
+.poster_figure {
+    position: absolute;
+    margin-top: 60px;
+    right: 0;
+    width: 400px;
+    height: 300px;
+    background-image: url(assets/img/poster_img_1.png);
+    background-repeat: no-repeat;
+    cursor: move;
+    user-select: none;
+    opacity: 85%;
+    z-index: -1000;
+    touch-action: none;
+    /*display: none;*/
+}
+
+.poster_figure_two {
+    position: absolute;
+    left: 100px;
+    margin-top: 520px;
+    width: 300px;
+    height: 400px;
+    background-image: url(assets/img/poster_img_2.png);
+    background-repeat: no-repeat;
+    cursor: move;
+    user-select: none;
+    display: none;
+    opacity: 85%;
+    z-index: 1;
+    touch-action: none;
+}
+
+.poster_figures {
+    position: absolute;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    width: 100%;
+    display: flex;
+}
+
+.poster_figure_greetings {
+    position: absolute;
+    top: 870px;
+    right: 0;
+    width: 320px;
+    height: 470px;
+    background-color: #000000;
+    transform: rotate(15deg);
+    opacity: 0.85; /* use numeric opacity to avoid rendering issues */
+    overflow: hidden;
+    cursor: move;
+    user-select: none;
+    z-index: 1;
+    touch-action: none;
+    display: none;
+}
+
+.paragraph_greetings {
+    width: 500px;
+    height: 450px;
+    position: absolute;
+    top: 57px;
+    left: 79px;
+    color: white;
+    font-size: 98px;
+    transform: rotate(-62deg);
+    overflow: hidden;
+}
+
+/* Capture action below the poster */
+.poster_actions {
+    text-align: center;
+    margin-top: 60px; /* lowered position */
+}
+
+.poster_capture {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 15px; /* smaller text as per design */
+    line-height: 1;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    color: #262626;
+}
+.poster_capture:hover {
+        text-decoration: none;
+
+
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .poster_capture:hover { opacity: 0.85; }
+}
+
+/* -------------- Secció alternatives i lligadures -------------- */
+
+.alternatives {
+    font-size: 5vw;
+    padding: 200px 0;
+}
+
+.alt-caracters {
+    font-family: "Caro", sans-serif; /* posa aquí el nom real de la font */
+    font-feature-settings: "alt " 1; /* alt + ESPAI! */
+}
+
+.tt-liga {
+    font-feature-settings: "dlig" 1;
+}
+
+.no-liga {
+    font-feature-settings:
+        "liga" 0,
+        "calt" 0,
+        "dlig" 0,
+        "hlig" 0;
+}
+
+/* -------------- Secció alternates -------------- */
+/* -------------- Secció alternates -------------- */
+/* -------------- Secció alternates -------------- */
+
+.alternates {
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 40px 0;
+    word-break: break-word;
+    height: 100vh;
+    overflow: visible;
+    z-index: -100;
+}
+
+/* -------------- Animació lletres alternatives -------------- */
+
+.alternates_title {
+    font-size: clamp(4.3rem, 6vw + 1rem, 6rem);
+    line-height: clamp(5rem, 6vw + 1rem, 6rem);
+    text-align: center;
+    overflow: hidden;
+    color: white;
+    animation-name: alternatesAnimation;
+    /*
+  animation-duration: 1.8s;
+    animation-iteration-count: infinite;
+    */
+    animation: alternatesAnimation 1.5s linear infinite alternate;
+}
+@keyframes alternatesAnimation {
+    from {
+        font-feature-settings: "alt " 0;
+    }
+    to {
+        font-feature-settings: "alt " 1;
+    }
+}
+
+.alternates_title_black {
+    color: var(--color-primari);
+}
+
+.alternates_paragraph_down {
+    font-feature-settings: "alt " 1; /* alt + ESPAI! */
+}
+
+/* -------------- Animació cercle -------------- */
+
+.circle_animation {
+    position: absolute;
+    display: flex;
+    justify-content: center; /* horitzontal */
+    align-items: center; /* vertical */
+    height: 100vh;
+    inset: 0;
+    pointer-events: none; /* per no molestar el ratolí */
+    z-index: -1;
+    /*background-color: #100aff;*/
+}
+
+.circle {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 496px;
+    border: 1.159px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 55.742px 63.738px rgba(255, 255, 255, 0.7);
+    transform: scale(1);
+    transform-origin: center;
+
+    transition:
+        transform 10s ease-in-out,
+        opacity 10s ease-in-out;
+    opacity: 1;
+}
+
+/* When resetting after an animation, we want the circle to instantly reappear
+   at the center without animating back from its scaled state. */
+.circle--no-transition {
+    transition: none !important;
+}
+
+/* Reset state: hidden and slightly smaller at center (no transition) */
+.circle--resetBase {
+    transition: none !important;
+    transform: scale(0.9) !important;
+    opacity: 0 !important;
+}
+
+/* Reveal state: short, smooth fade/scale to default (center) */
+.circle--reveal {
+    transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 450ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+    transform: scale(1) !important;
+    opacity: 1 !important;
+}
+
+/* Quan la classe “triggered” s'activa */
+.circle.triggered {
+    transform: scale(16);
+    opacity: 0;
+}
+
+/* ---------------- Secció article Mobile ---------------- */
+/* ---------------- Secció article Mobile ---------------- */
+/* ---------------- Secció article Mobile ---------------- */
+
+.section_article {
+    padding: 0 20px;
+}
+
+.article {
+    /*height: 100vh;*/
+    /*padding: 150px 0;*/
+    /*background-color: rgba(38, 38, 38, 0.16);*/
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    /*grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;*/
+
+    /*grid-auto-rows: 100px;*/
+    column-gap: 10px;
+    row-gap: 15px;
+    margin: 100px 0;
+    z-index: 2;
+    /*
+    grid-template-areas:
+        "item1 item1 item1 item1 . . . . . . . ."
+        "item1 item1 item1 item1 . . . . . . . ."
+        "item1 item1 item1 item1 . . . . . . . ."
+        ". . . . . . . . . . . ."
+        "item2 item2 item2 item2 item2 item2 item2 item2 . . . ."
+        "item2 item2 item2 item2 item2 item2 item2 item6 item6 item6 item6 . "
+        "item2 item2 item2 item2 item2 item2 item2 item6 item6 item6 item6 . "
+        ". item3 item3 item3 item3 . . item6 item6 item6 item6 ."
+        ". item3 item3 item3 item3 . . item6 item6 item6 item6 ."
+        ". item3 item3 item3 item3 . . item6 item6 item6 item6 ."
+        ". item4 item4 item4 . . . . . . . ."
+        ". item5 item5 item5 . . . . . . . .";
+        */
+}
+
+/* -------------------- !! ANIMACIÓ ALTERNATIVES ARTICLE !!  alternatesAnimation -------------------- */
+
+/*
+.article_items {
+    animation-name: alternatesAnimation;
+    animation: alternatesAnimation 2s linear infinite alternate;
+}
+*/
+
+.article_items--t1 {
+    /*grid-area: item1;*/
+    /*background-color: red;*/
+    grid-column: 1/13;
+    /*grid-row: 1/4;*/
+}
+.text1 {
+    font-size: 10rem;
+    line-height: 9rem;
+    /*text-align: center;*/
+}
+
+.article_items--t2 {
+    /*grid-area: item2;*/
+    /*background-color: #ffa1f9;*/
+    grid-column: 1/13;
+    /*grid-row: 4/8;*/
+}
+.text2 {
+    font-size: 26px;
+    line-height: 28px;
+}
+
+.article_items--t3 {
+    /*grid-area: item3;*/
+    /*background-color: yellow;*/
+    grid-column: 1/13;
+    /*grid-row: 7/11;*/
+}
+.text3 {
+    font-size: 16px;
+    line-height: 18px;
+}
+
+.article_items--t4 {
+    /*grid-area: item4;*/
+    /*background-color: orange;*/
+    grid-column: 1/13;
+    /*grid-row: 11/13;*/
+}
+.text4 {
+    font-size: 12px;
+    line-height: 14px;
+}
+
+.article_items--t5 {
+    /*grid-area: item5;*/
+    /*background-color: orange;*/
+    grid-column: 1/13;
+    /*grid-row: 11/13;*/
+}
+.text5 {
+    font-size: 12px;
+    line-height: 14px;
+}
+
+.article_items--t6 {
+    /*grid-area: item6;*/
+    grid-column: 1/13;
+    /*grid-row: 5/10;*/
+    z-index: -1;
+}
+.img6 {
+    /*background-color: aqua;*/
+    width: 100%;
+    height: 90%;
+    object-fit: cover;
+    filter: saturate(0);
+}
+.article_items--t7 {
+    background-color: white;
+    display: none;
+    /*top: -230px;*/
+    /*height: 100px;*/
+    grid-column: 1/13;
+    grid-row: 10/13;
+    transform: rotate(15deg);
+    z-index: -2;
+}
+
+/*
+img7{
+     background-color: white;
+ width: 100px;
+    height: 100px;
+}
+*/
+
+/*----------------------------- Baselines Section ------------------------------*/
+/*----------------------------- Baselines Section ------------------------------*/
+/*----------------------------- Baselines Section ------------------------------*/
+
+.baselines {
+    height: 50vh;
+    /*background-color: yellow;*/
+    /*align-content: center;*/
+    position: relative;
+    margin-top: 100px;
+}
+
+.baselines_figure {
+    padding: 80px 0 0 0;
+    /*height: 50vh;*/
+    /*background-color: green;*/
+}
+.baselines_image {
+    width: 100%;
+}
+
+/* Ensure inline SVG injected into picture scales responsively */
+svg.baselines_image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.baselines_text {
+    /*padding: 20px;*/
+    position: absolute;
+    /*right: 0;*/
+    right: 20px;
+    bottom: 60px;
+    /*mix-blend-mode: screen;*/
+    transform: rotate(-15deg);
+    z-index: 100;
+}
+
+.baselines_paragraph {
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    line-height: 1.7rem;
+    color: var(--color-primari);
+    /*color: #ffffff;*/
+}
+
+/*----------------------------- Design_features Section ------------------------------*/
+/*----------------------------- Design_features Section ------------------------------*/
+/*----------------------------- Design_features Section ------------------------------*/
+
+.design_features {
+    /*height: 80vh;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /*gap: 7vw;*/
+    /*margin: 100px 0;*/
+}
+
+.vector_image {
+    width: 100%;
+}
+
+.weight_image {
+    width: 100%;
+}
+
+/*----------------------------- Qq SVG Animation ------------------------------*/
+
+.cercle_exclusion {
+    transform-box: fill-box;
+    animation: cercle_exclusion 7s infinite normal;
+    transform-origin: center center;
+}
+
+@keyframes cercle_exclusion {
+    0% {
+        transform: scale(100%);
+        transform: translateX(-50%) translateY(10%) rotate(0deg) scale(0.4);
+    }
+
+    25% {
+        transform: translateX(-60%) translateY(60%) rotate(90deg) scale(1);
+    }
+    50% {
+        transform: translateX(30%) translateY(80%) rotate(0deg) scale(0.6);
+    }
+    75% {
+        transform: translateX(55%) translateY(0%) rotate(-180deg) scale(0.6);
+    }
+    100% {
+        transform: translateX(-50%) translateY(10%) rotate(0deg) scale(0.4);
+    }
+}
+
+/*----------------------------- Hh SVG Animation ------------------------------*/
+
+.cercle_89 {
+    transform-box: fill-box;
+    animation: cercle_89 25s infinite normal;
+    transform-origin: center center;
+}
+
+@keyframes cercle_89 {
+    0% {
+        /*stroke:red;*/
+        transform: translateY(-30%) rotate(-360deg);
+    }
+    25% {
+        /*stroke:blue;*/
+        transform: translateY(-220%) rotate(90deg);
+    }
+    50% {
+        /*stroke:yellow;*/
+        transform: translateY(-120%) rotate(0deg);
+    }
+    75% {
+        /*stroke:pink;*/
+        transform: translateY(-60%) rotate(-180deg);
+    }
+    100% {
+        /*stroke:green;*/
+        transform: translateY(-30%) rotate(-360deg);
+    }
+}
+
+.cercle_88 {
+    transform-box: fill-box;
+    animation: cercle_88 25s infinite normal;
+    transform-origin: center center;
+}
+
+@keyframes cercle_88 {
+    0% {
+        /*stroke:red;*/
+        transform: translateX(130%) rotate(-360deg);
+    }
+    25% {
+        /*stroke:blue;*/
+        transform: translateX(-150%) rotate(90deg);
+    }
+    50% {
+        /*stroke:yellow;*/
+        transform: translateX(-80%) rotate(0deg);
+    }
+    75% {
+        /*stroke:pink;*/
+        transform: translateX(60%) rotate(-180deg);
+    }
+    100% {
+        /*stroke:green;*/
+        transform: translateX(130%) rotate(-360deg);
+    }
+}
+
+.cercle_93 {
+    transform-box: fill-box;
+    animation: cercle_93 25s infinite normal;
+    transform-origin: center center;
+}
+
+@keyframes cercle_93 {
+    0% {
+        /*stroke:red;*/
+        transform: translateY(0%) rotate(-360deg);
+    }
+    25% {
+        /*stroke:blue;*/
+        transform: translateY(-150%) rotate(90deg);
+    }
+    50% {
+        /*stroke:yellow;*/
+        transform: translateY(-80%) rotate(0deg);
+    }
+    75% {
+        /*stroke:pink;*/
+        transform: translateY(60%) rotate(-180deg);
+    }
+    100% {
+        /*stroke:green;*/
+        transform: translateY(0%) rotate(-360deg);
+    }
+}
+
+/*----------------------------- Sentence Section ------------------------------*/
+/*----------------------------- Sentence Section ------------------------------*/
+/*----------------------------- Sentence Section ------------------------------*/
+
+.sentence {
+    position: sticky;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    /*background: linear-gradient(rgba(222, 222, 222, 0), black);*/
+    /*background: linear-gradient(rgba(255, 0, 0, 0), black);*/
+    /*background-color:rgba(255, 0, 0, 0);*/
+    /*background-color: var(--gray-color); */
+    /*potser utilitzar aquest color i pensar una secció entre mig sobre les alternatives*/
+    overflow: hidden;
+    background-color: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1.159px solid rgba(255, 255, 255, 0.1);
+    /*box-shadow: 0 0 55.742px 63.738px rgba(255, 255, 255, 0.1);*/
+    box-shadow: 0px -40px 30px 1px rgba(255, 255, 255, 0.1);
+}
+
+/*
+.sentence::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    background: linear-gradient(rgba(255, 0, 0, 0), black);
+    background-color: rgba(255, 0, 0, 0.5);
+    z-index: -2;
+}
+*/
+
+.sentence2 {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+
+    overflow: hidden;
+    background-color: #262626;
+}
+
+.sentence3 {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: black;
+    overflow: hidden;
+}
+
+.sentence_paragraph {
+    color: #8d8d8d;
+    text-align: center;
+    font-size: 7.6rem;
+    line-height: 7.6rem;
+    width: 110vw;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+}
+
+.alt-a {
+    color: white;
+    font-family: "Caro", sans-serif;
+    font-feature-settings: "alt " 1;
+}
+
+.lletra-a {
+    color: white;
+}
+
+
+#textSetToggle {
+    position: absolute;
+    bottom: 200px;
+    right: 200px;
+    cursor: pointer;
+    z-index: 100;
+}
+
+
+.sentence_container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sentence_container #textSetToggle {
+    position: absolute;
+    right: 80px;
+    bottom: 370px;
+    width: 320px;
+    height: 346px;
+
+    cursor: pointer;
+    z-index: 1000;
+    pointer-events: auto;
+    border: none;
+    padding: 0;
+    background-image: url("./assets/1_text_set1.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+}
+
+
+
+/* Mobile-only: hide the 'a' text set toggle button */
+@media (max-width: 520px) {
+    #textSetToggle,
+    .sentence_container #textSetToggle {
+        display: none !important;
+    }
+}
+
+.sentence_container #textSetToggle:hover {
+    opacity: 1;
+}
+
+.sticky {
+    position: sticky;
+    top: 0;
+    /*z-index: 10;*/
+}
+
+.main {
+    position: relative;
+    width: 100%;
+    /*overflow: hidden;*/
+    z-index: 0;
+}
+
+.overflow {
+    overflow: hidden;
+}
+
+/* Sentence columns layout */
+.sentence_columns {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    display: block;
+    /* respect same horizontal margins as article section */
+    padding: 0 20px;
+}
+
+.sentence_columns .sentence_paragraph {
+    color: #e0e0e0;
+    font-size: var(--columns-font-size, 18px);
+    line-height: 1.6;
+    /* top/bottom spacing, horizontal handled by container padding */
+    padding: 40px 0;
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+    column-count: 3;
+    /* gap equal to horizontal margin */
+    column-gap: 20px;
+    column-fill: balance;
+}
+
+/* Cursor when hovering the sentence paragraph inside sentence_columns */
+@media (hover: hover) and (pointer: fine) {
+    .sentence_columns .sentence_paragraph:hover { cursor: zoom-in; }
+}
+
+/* Draggable g->g toggle in columns (same size as previous) */
+.sentence_columns #textSetToggleColumns {
+    position: absolute;
+    width: 320px;
+    height: 346px;
+    cursor: pointer;
+    z-index: 1000;
+    pointer-events: auto;
+    border: none;
+    padding: 0;
+    background-image: url("./assets/1_text_set_3.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+}
+
+.sentence_columns #textSetToggleColumns:hover { opacity: 1; }
+
+/* Alt glyph for 'g' */
+.alt-g {
+    color: #fff;
+    font-family: "Caro", sans-serif;
+    font-feature-settings: "alt " 1;
+}
+
+/* Coordenades ------> Marc general de la composició (1728x1117 approx) */
+.coords-section {
+    width: 100%;
+    height: 100vh;
+    /*max-width: 1728px;*/
+    margin: 0 auto;
+    aspect-ratio: 1728 / 1117;
+    /* background: #111111; */
+    position: relative;
+    overflow: hidden;
+    /*padding: clamp(48px, 6vw, 80px);*/
+}
+
+/* Overlay stage: show coords as a full-viewport interstitial above hero */
+.coords-section.overlay-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 1500; /* above nav and hero */
+    margin: 0;
+    padding: 0;
+    background: var(--gray-color); /* cover underlying content during entry */
+    opacity: 0;
+    /* Very soft fade for the whole section */
+    transition: opacity 2000ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity;
+}
+.coords-section.overlay-stage.is-active {
+    opacity: 1;
+}
+/* (Optional) If inner fade is used, keep it synchronized with section fade */
+.coords-section.overlay-stage .coords-inner { opacity: 1; }
+.coords-section.overlay-stage.is-exiting {
+    background: transparent; /* reveal underlying scroll */
+    /* Blur the content behind (hero) instead of the overlay itself */
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+}
+/* During overlay, keep internal elements static (no re-entry animations) */
+.coords-section.overlay-stage .coords-line--top,
+.coords-section.overlay-stage .coords-line--bottom {
+    transform: translateY(0) !important;
+}
+.coords-section.overlay-stage .coords-chunk--top-left,
+.coords-section.overlay-stage .coords-chunk--top-right,
+.coords-section.overlay-stage .coords-chunk--bottom-left,
+.coords-section.overlay-stage .coords-chunk--bottom-right {
+    transform: translateX(0) !important;
+}
+/* (videos animate only when section becomes visible; do not force during overlay) */
+
+.coords-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* Etiquetes 2x3 */
+.coords-label {
+    position: absolute;
+    font-size: 11px;
+    transition-delay: 3000ms !important; /* show earlier */
+    text-transform: uppercase;
+}
+
+/* fila superior */
+.coords-label--tl {
+    top: 40px;
+    left: 18%;
+    transform: translateX(-50%);
+}
+
+.coords-label--tr {
+    top: 40px;
+    right: 18%;
+    transform: translateX(50%);
+}
+
+/* fila central (verticals) */
+.coords-label--ml {
+    /*left: 0%;*/
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: center;
+}
+
+.coords-label--mr {
+    right: 0%;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    transform-origin: center;
+}
+
+/* fila inferior */
+.coords-label--bl {
+    bottom: 40px;
+    left: 18%;
+    transform: translateX(-50%) rotate(180deg);
+    transform-origin: center;
+}
+
+.coords-label--br {
+    bottom: 40px;
+    right: 18%;
+    /*transform: translateX(50%);*/
+    transform: translateX(50%) rotate(180deg);
+    transform-origin: center;
+}
+
+/* Bloc central de coordenades */
+.coords-main {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(24px, 4vh, 36px);
+    transform: scale(0.65);
+    opacity: 0;
+    
+}
+
+/* Desktop entry: central block starts small and transparent, then grows/fades in */
+.coords-section.overlay-stage .coords-main {
+    transform: scale(0.65);
+    opacity: 0;
+    transform-origin: center;
+    transition:
+        transform 2000ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 2000ms ease;
+}
+.coords-section.overlay-stage.is-active .coords-main {
+    transform: scale(0.80);
+    opacity: 1;
+}
+
+/* Desktop: central block scales in after section fade */
+.coords-section.overlay-stage .coords-main {
+    opacity: 0;
+    transform: scale(0.58);
+    transition: transform 2000ms cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: center;
+}
+.coords-section.overlay-stage.is-active .coords-main {
+    transform: scale(0.80);
+    opacity: 1;
+}
+
+.coords-line {
+    display: flex;
+    align-items: baseline;
+    gap: clamp(16px, 2vw, 28px);
+    font-size: clamp(56px, 11vw, 160px);
+    line-height: 0.2;
+    transition: transform 1000ms linear;
+}
+
+/* posició lleugerament desplaçada (FRAME 1) */
+.coords-line--top {
+    transform: translateY(8px);
+}
+
+.coords-line--bottom {
+    transform: translateY(-8px);
+}
+
+/* fragments de text: també animaran en X per simular l'entrada del vídeo */
+.coords-chunk {
+    display: inline-block;
+    transition: transform 1000ms linear;
+}
+
+/* estat inicial (FRAME 1): el text està més a prop, com si no hi hagués vídeo */
+.coords-chunk--top-left {
+    transform: translateX(40px);
+}
+
+.coords-chunk--top-right {
+    transform: translateX(-40px);
+}
+
+.coords-chunk--bottom-left {
+    transform: translateX(40px);
+}
+
+.coords-chunk--bottom-right {
+    transform: translateX(-40px);
+}
+
+/* Vídeos inline, ocupant el buit entre fragments de text */
+.coords-video-wrapper {
+    display: inline-block;
+    width: clamp(90px, 9vw, 130px);
+    height: clamp(90px, 9vw, 130px);
+    overflow: hidden;
+}
+
+.coords-video {
+    width: 100%;
+    height: 86%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(0.6);
+    transform-origin: center;
+    transition:
+        opacity 600ms linear,
+        transform 700ms linear;  
+    transition-delay: 0ms; /* delay com a Figma */
+    pointer-events: none;
+    filter: saturate(0);
+}
+
+/* Estat final: quan la secció és visible (FRAME 2) */
+.coords-section.is-visible .coords-line--top,
+.coords-section.is-visible .coords-line--bottom {
+    transform: translateY(0);
+}
+
+.coords-section.is-visible .coords-chunk--top-left,
+.coords-section.is-visible .coords-chunk--top-right,
+.coords-section.is-visible .coords-chunk--bottom-left,
+.coords-section.is-visible .coords-chunk--bottom-right {
+    transform: translateX(0);
+}
+
+.coords-section.is-visible .coords-video {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Earlier video appearance: allow videos to animate before the rest of the content */
+.coords-section.is-video-visible .coords-video {
+    opacity: 1;
+    transform: scale(1);
+    transition-delay: 0ms;
+}
+
+/* Responsive: quan l'espai és més petit, reduïm una mica */
+@media (max-width: 900px) {
+    .coords-section {
+        padding: 32px 24px;
+    }
+
+    .coords-label--tl,
+    .coords-label--tr,
+    .coords-label--bl,
+    .coords-label--br {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 600px) {
+    .coords-label--ml,
+    .coords-label--mr {
+        display: none;
+    }
+
+    .coords-video {
+        width: 100%;
+        height: 70%;
+        padding-top: 9px;
+    }
+
+    .coords-line {
+        font-size: clamp(40px, 14vw, 64px);
+    }
+
+    .coords-video-wrapper {
+        width: clamp(70px, 18vw, 96px);
+        height: clamp(70px, 18vw, 96px);
+    }
+}
+
+/* --- Ajustos extra demanats --- */
+
+/* La secció de coordenades sempre com a mínim 100vh a desktop */
+.coords-section {
+    min-height: 100vh;
+}
+
+/* --- MOBILE v7: coordenades centrades i alineades quan es giren --- */
+@media (max-width: 768px) {
+    .coords-section {
+        width: 100%;
+        height: 100vh;
+        padding: 24px 16px;
+        transform: none;
+        position: relative;
+        overflow: hidden;
+        max-width: 100%;
+    }
+
+    .coords-inner {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .coords-main {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-90deg);
+        transform-origin: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        width: 140%;
+        max-width: 500px; /* ajustable segons proves reals */
+    }
+
+    /* Overlay entry on mobile: include scale+opacity with existing translate/rotate */
+    .coords-section.overlay-stage .coords-main {
+        transform: translate(-50%, -50%) rotate(-90deg) scale(0.65);
+        opacity: 0;
+        transition:
+            transform 2000ms cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 2000ms ease;
+    }
+    .coords-section.overlay-stage.is-active .coords-main {
+        transform: translate(-50%, -50%) rotate(-90deg) scale(0.85);
+        opacity: 1;
+    }
+
+    .coords-line {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: clamp(61px, 9vw, 44px);
+        gap: 10px;
+        white-space: nowrap;
+    }
+
+    .coords-video-wrapper {
+        width: clamp(55px, 20vw, 72px);
+        height: clamp(55px, 20vw, 72px);
+    }
+}
+
+/* ---------- Secció Tester Mobile ------------ */
+/* ---------- Secció Tester Mobile ------------ */
+/* ---------- Secció Tester Mobile ------------ */
+
+/* Main section keeps 100vh minimum, but can grow with content */
+.tester {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top bar */
+.topbar {
+    padding: 0 var(--pad-x);
+}
+
+.topbar__rule {
+    height: 1px;
+    background: #262626;
+    margin-top: 32px;
+    margin-bottom: 22px;
+}
+
+/* Controls row */
+.controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    padding-bottom: 10px;
+}
+
+/* Font name (clickable on small screens to reveal sliders) */
+.fontname {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    color: var(--ink);
+    font-family:
+        "Caro",
+        system-ui,
+        -apple-system,
+        Segoe UI,
+        Roboto,
+        Arial,
+        sans-serif;
+    font-size: 16px;
+}
+.fontname:focus-visible {
+    outline: 2px solid #262626;
+    outline-offset: 6px;
+    border-radius: 6px;
+}
+
+/* Desktop vs mobile label swap */
+.fontname__mobile {
+    display: inline;
+}
+.fontname__desktop {
+    display: none;
+}
+
+/* Panel with sliders + pangram */
+.controls__panel {
+    position: absolute;
+    left: var(--pad-x);
+    right: var(--pad-x);
+    top: 78px;
+    background: rgba(217, 217, 217, 0.98);
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    border-radius: 18px;
+    padding: 14px 14px;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.tester[data-panel-open="true"] .controls__panel {
+    display: flex;
+}
+
+.control {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    white-space: nowrap;
+    font-size: 16px;
+}
+
+.control__label {
+    opacity: 1;
+}
+
+/* Range slider styling (ALT-like: thin track + solid thumb) */
+.range {
+    width: 160px;
+    background: transparent;
+    appearance: none;
+    height: 18px;
+    cursor: pointer;
+    padding-top: 0;
+}
+.range:focus-visible {
+    outline: 2px solid #262626;
+    outline-offset: 6px;
+    border-radius: 999px;
+}
+
+/* Track */
+.range::-webkit-slider-runnable-track {
+    height: 1px;
+    background: #262626;
+}
+.range::-moz-range-track {
+    height: 1px;
+    background:#262626;
+}
+
+/* Thumb */
+.range::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    margin-top: -6.5px; /* centers on 1px track */
+    border-radius: 999px;
+    background: var(--ink);
+    border: 0;
+}
+.range::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: var(--ink);
+    border: 0;
+}
+
+/* Pangram button */
+.pangram {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-family:
+        "Caro",
+        system-ui,
+        -apple-system,
+        Segoe UI,
+        Roboto,
+        Arial,
+        sans-serif;
+    font-size: 16px;
+    padding: 6px 8px;
+    border-radius: 10px;
+}
+
+/* Desktop vs small screens placement */
+.pangram--desktop {
+    display: none;
+}
+.pangram--top {
+    display: inline-flex;
+}
+.pangram:focus-visible {
+    outline: 2px solid #262626;
+    outline-offset: 3px;
+}
+.pangram__label {
+    display: none;
+}
+
+.pangram__icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* Alignment icon buttons */
+.align {
+    display: none;
+    align-items: center;
+    gap: 20px;
+}
+
+.iconbtn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    padding: 6px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.iconbtn img {
+    display: block;
+    width: 26px;
+    height: 18px;
+}
+/* No hover/active styling (per your request) */
+.iconbtn:focus-visible {
+    outline: 2px solid #262626;
+    outline-offset: 3px;
+}
+
+/* Stage */
+.stage {
+    flex: 1;
+    padding: 72px var(--pad-x) 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.hint {
+    margin: 0;
+    /* Same size as the rest of the UI text */
+    font-size: 16px;
+}
+
+/* The text area (auto-grows) */
+.text {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    resize: none;
+    overflow: hidden; /* no scrollbars; it grows */
+    outline: none;
+
+    font-family:
+        "Caro",
+        system-ui,
+        -apple-system,
+        Segoe UI,
+        Roboto,
+        Arial,
+        sans-serif;
+    font-size: var(--font-size);
+    letter-spacing: var(--tracking);
+    line-height: var(--line-height);
+    color: var(--ink);
+
+    /* Wrapping */
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ------------- Secció Character Set MOBILE -------------- */
+
+.page {
+    width: 100%;
+    padding: 24px;
+}
+
+.character-set__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+    align-items: start;
+}
+
+/* LEFT: glyph table */
+.glyphs__grid {
+    display: grid;
+    /* Mobile-first: columns adapt automatically */
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    /*border-top: 1px solid var(--border);*/
+    /*border-left: 1px solid var(--border);*/
+    border-top: 1px solid #262626;
+    border-left: 1px solid #262626;
+    width: 100%;
+}
+
+.glyph {
+    appearance: none;
+    border: 0;
+    background: var(--tile);
+    /*border-right: 1px solid var(--border);*/
+    /*border-bottom: 1px solid var(--border);*/
+    border-right: 1px solid #262626;
+    border-bottom: 1px solid #262626;
+    padding: 0;
+    height: clamp(56px, 7vw, 92px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Caro", system-ui, sans-serif;
+    font-size: clamp(26px, 3.6vw, 44px);
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Alternate glyph tiles (a/g/k/t/y) */
+.glyph--alt {
+    font-feature-settings: "alt" 1;
+}
+
+.glyph:focus-visible {
+    outline: 3px solid #262626;
+    outline-offset: -3px;
+}
+
+.glyph:hover {
+    background: #f6f6f6;
+}
+
+/* Dark theme: glyph hover should be medium gray */
+[data-theme="dark"] .glyph:hover {
+    background: #888888;
+}
+
+/* RIGHT: desktop preview */
+.preview--desktop {
+    display: none;
+}
+
+.preview__frame {
+    background: var(--frame);
+    /*border: 1px solid var(--border);*/
+    width: 100%;
+    max-width: 760px;
+    min-height: 520px;
+    height: 70vh;
+    max-height: 740px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview__title {
+    position: absolute;
+    top: 34px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 14px;
+    /*letter-spacing: 0.02em;*/
+}
+
+.preview__meta {
+    position: absolute;
+    bottom: 34px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 12px;
+}
+
+.preview__glyph {
+    font-family: "Caro", system-ui, sans-serif;
+    color: #262626;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(2%);
+}
+
+.preview__glyph.is-alt {
+    font-feature-settings: "alt" 1;
+}
+
+/* 800pt-ish feeling */
+#previewGlyphDesktop {
+    font-size: clamp(220px, 34vw, 520px);
+}
+
+#previewGlyphFloating {
+    font-size: clamp(160px, 34vw, 340px);
+}
+
+/* Floating preview for tablet/mobile */
+.preview--floating {
+    position: fixed;
+    inset: 0 auto auto 0;
+    width: min(420px, 70vw);
+    height: min(420px, 70vw);
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: opacity 140ms ease;
+    border: 1px solid #262626;
+}
+
+.preview--floating .preview__frame {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    max-width: none;
+    max-height: none;
+}
+
+.preview--floating.is-visible {
+    opacity: 1;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ---------------- Secció Ligatures ---------------- */
+/* ---------------- Secció Ligatures ---------------- */
+/* ---------------- Secció Ligatures ---------------- */
+
+.ligatures {
+    padding: 0 20px;
+    /*height: 100vh;*/
+    margin-top: 100px;
+    /*background-color: blue;*/
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
+}
+
+.Ligatures_text {
+    display: flex;
+    justify-content: center;
+    text-transform: uppercase;
+}
+
+.flight-wrapper {
+    /*width:100vw;*/
+    /*border: 3px solid red;*/
+    display: flex;
+    justify-content: center;
+}
+
+.flight-svg {
+    /*border: 3px solid green;*/
+    height: 50vh;
+    /*width: 100vw;*/
+    max-width: 750px; /* ajusta-ho al teu layout */
+    /*padding-right:80px;*/
+    /*background-color: yellow;*/
+    position: relative;
+    z-index: 1; /* base under video unless explicitly raised */
+}
+.flight-svg--top {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3; /* above video */
+    pointer-events: none;
+}
+
+/* estat inicial de cada còpia del logo */
+.flight-copy {
+    opacity: 0;
+    transform: translate(0, 0);
+    animation: none; /* IMPORTANT: no animation-play-state; l’animació s’assigna quan es dispara */
+}
+
+/* retards (after delay 100 ms) */
+.flight-copy:nth-of-type(1) {
+    --i: 9;
+    animation-delay: 900ms;
+}
+.flight-copy:nth-of-type(2) {
+    --i: 8;
+    animation-delay: 800ms;
+}
+.flight-copy:nth-of-type(3) {
+    --i: 7;
+    animation-delay: 700ms;
+}
+.flight-copy:nth-of-type(4) {
+    --i: 6;
+    animation-delay: 600ms;
+}
+.flight-copy:nth-of-type(5) {
+    --i: 5;
+    animation-delay: 500ms;
+}
+.flight-copy:nth-of-type(6) {
+    --i: 4;
+    animation-delay: 400ms;
+}
+.flight-copy:nth-of-type(7) {
+    --i: 3;
+    animation-delay: 300ms;
+}
+.flight-copy:nth-of-type(8) {
+    --i: 2;
+    animation-delay: 200ms;
+}
+.flight-copy:nth-of-type(9) {
+    --i: 1;
+    animation-delay: 100ms;
+}
+.flight-copy:nth-of-type(10) {
+    --i: 0;
+    animation-delay: 0ms;
+}
+
+/* en entrar (i quedar fixat amb .run), s’injecta l’animació i aquesta acaba sola */
+.flight-wrapper.run .flight-copy {
+    animation-name: flightSvgTrail;
+    animation-duration: 0.1s;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+    animation-iteration-count: 1;
+}
+
+/* animació: apareix i es desplaça en diagonal segons l’índex */
+@keyframes flightSvgTrail {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(calc(var(--i) * 5px), /* X */ calc(var(--i) * -8px) /* Y */);
+    }
+}
+
+/* --- Ligature cards (labels under each ligature) --- */
+.flight-wrapper {
+    position: relative; /* enable absolute positioning for the card */
+}
+
+.ligature-card {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* base font */
+    font-family: inherit;
+    font-size: 48px;
+    font-weight: 500;
+    line-height: 1;
+    /* no shadow per design */
+    box-shadow: none;
+    /*transform:rotate(-12deg);*/
+    z-index: 3; /* above SVG and video */
+    opacity: 0; /* revealed after SVG animation finishes */
+    /* smooth appearance and invert between default and hover */
+    transition: opacity 360ms ease, background-color 360ms ease, color 360ms ease;
+}
+
+/* Reveal cards once the wrapper starts running the SVG animation */
+.flight-wrapper.run .ligature-card {
+    opacity: 1;
+}
+
+/* Interleaved video inside SVG using foreignObject */
+.flight-fo { opacity: 0; pointer-events: none; transition: opacity 360ms ease; }
+.flight-fo .fo-video {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: grayscale(100%);
+}
+
+/* Orientation + size (responsive via clamp) */
+.ligature-card--portrait {
+    width: 110px;
+    height: 160px;
+}
+
+.ligature-card--landscape {
+    width: 160px;
+    height: 105px;
+}
+
+.ligature-card--dark {
+    background: #262626;
+    color: #fff;
+    transform: rotate(12deg) !important;
+    top: 260px !important;
+    /*left:1100px !important;*/
+}
+
+.ligature-card--light {
+    background: #fff;
+    color: #262626;
+    transform: rotate(-12deg) !important;
+    /*left: 20px !important;*/
+    top: 220px !important;
+}
+
+/* Hover inversion and hand cursor (desktop/tablet only) */
+@media (hover: hover) and (pointer: fine) {
+    .ligature-card--dark:hover { background: #fff; color: #262626; }
+    .ligature-card--light:hover { background: #262626; color: #fff; }
+}
+
+/* Per-wrapper placement to match the design */
+/* Placement tuned to match design */
+#flight-1 .ligature-card {
+    right: 64px;
+    top: 244px;
+}
+
+#flight-2 .ligature-card {
+    left: 140px;
+    top: 300px;
+    transform: rotate(-6deg);
+}
+
+/* Removed empty #flight-3 .ligature-card rule (placement now controlled elsewhere) */
+
+/* Reveal timing handled via JS (animationend of last frame) */
+
+/* -------------- Section Flag --------------- */
+/* -------------- Section Flag --------------- */
+/* -------------- Section Flag --------------- */
+
+.flag-section {
+    height: 100vh;
+    background: #262626;
+    position: relative;
+    overflow: hidden;
+}
+
+.flag-section canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Cursor style over the flag */
+.flag-section:hover { cursor: crosshair; }
+.flag-section canvas { cursor: inherit; }
+
+/* Flag section titles */
+.flag__title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #cfcfcf;
+    pointer-events: none;
+    /* inherit font settings from .inuse__title */
+}
+.flag__title--top { top: 12vh; }
+.flag__title--bottom { bottom: 8vh; }
+
+@media (min-width: 900px) {
+    .flag__title--top { top: 10vh; }
+    .flag__title--bottom { bottom: 6vh; }
+}
+
+@media (min-width: 1125px) {
+    .flag__title--top { top: 8vh; }
+    .flag__title--bottom { bottom: 6vh; }
+}
+
+/* --- Layout overrides (do not affect flag shader) --- */
+html,
+body {
+    height: 100%;
+}
+
+.flag-section {
+    height: 100vh;
+    min-height: 100vh;
+    max-height: 100vh;
+    background: #262626 !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.flag-section #flag,
+.flag-section canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* -------------------------- SECCIÓ IN USE MOBILE --------------------- */
+
+.inuse {
+    /*background: var(--bg);*/
+    padding: 56px 0 64px;
+}
+
+.inuse__title {
+    margin: 0 0 42px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+
+.inuse__stack {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 0 var(--pad);
+    padding: 24px;
+}
+
+.inuse__item {
+    margin: 0;
+}
+
+.inuse__item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* hide desktop carousel on mobile */
+.inuse__carousel {
+    display: none;
+}
+
+/* ---------------------- Secció footer ------------------------ */
+
+.caro-footer {
+    min-height: 100vh;
+    padding: 56px 18px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* GET FONT */
+.getfont {
+    display: flex;
+    flex-direction: column; /* MOBILE */
+    gap: 14px;
+    text-decoration: none;
+    color: #262626;
+    font-size: clamp(86px, 32vw, 230px);
+    line-height: 0.88;
+    transform: translateY(-60px);
+    opacity: 0;
+    transition:
+        transform 0.9s ease,
+        opacity 0.9s ease,
+        color 0.3s ease;
+}
+
+.getfont.is-visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.getfont__arrow {
+    display: inline-block;
+    transition: transform 0.45s ease;
+    transform: translateY(-20px);
+}
+
+.getfont:hover {
+    color: #fff;
+}
+
+/* Bottom area */
+.footer-rule {
+    height: 1px;
+    width: 100%;
+    background: var(--rule);
+    margin-bottom: 18px;
+}
+
+.footer-meta {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    font-size: 16px;
+    line-height: 1.1;
+    border-top: 1px solid #262626;
+    padding-top: 25px;
+    margin-bottom: 10px;
+}
+
+.footer-left,
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-wrap: wrap;
+}
+
+.footer-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    white-space: normal;
+}
+
+.footer-link {
+    color: inherit;
+    text-decoration: none;
+    position: relative;
+}
+.footer-link:hover,
+.footer-link:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+}
+
+.sep {
+    opacity: 0.7;
+}
+
+.copyright-icon {
+    width: 12px;
+    height: 12px;
+    transform: translateY(-4px);
+}
+
+/*-------------------- S'activarà als 521px o més -------------------- */
+
+/* --------------- Secció Tester Tablet --------------- */
+/* --------------- Secció Tester Tablet --------------- */
+/* --------------- Secció Tester Tablet --------------- */
+
+@media (min-width: 521px) {
+    :root {
+        --pad-x: 20px;
+        --font-size: 110px;
+        --line-height: 0.95;
+    }
+
+    .fontname__desktop {
+        display: inline;
+        padding-right: 50px;
+    }
+    .fontname__mobile {
+        display: none;
+    }
+
+    .align {
+        display: inline-flex;
+    }
+
+    .controls__panel {
+        top: 92px;
+        padding: 16px 18px;
+        flex-direction: row;
+        align-items: center;
+        gap: 18px;
+    }
+    .range {
+        width: 180px;
+        padding-top: 0;
+    }
+
+    .stage {
+        padding: 58px var(--pad-x) 72px;
+        gap: 22px;
+    }
+
+    .text {
+        text-align: center;
+    }
+
+    .poster_actions {
+    margin-top: 160px;
+}
+
+    /* ------------------ SECCIÓ LIGATURES ---------------- */
+    .ligature-card--light {
+        /*left: 465px !important;*/
+        top: 234px !important;
+    }
+ 
+}
+
+/*-------------------- S'activarà als 568px o més -------------------- */
+
+@media (width >=568px) {
+    .hero {
+        height: 68vh;
+    }
+    .title_container {
+        /*height: 70vh;*/
+        gap: 15vh;
+        /*background-color: yellow;*/
+    }
+    .poster_paragraph {
+        text-align: center;
+        font-size: clamp(6rem, 7vw + 1rem, 6rem);
+        line-height: clamp(6rem, 6vw + 1rem, 6rem);
+    }
+
+    /* ---------------- Alternates -------------- */
+
+    .alternates_title {
+        font-size: clamp(9rem, 6vw + 1rem, 6rem);
+        line-height: clamp(9rem, 6vw + 1rem, 6rem);
+    }
+
+    .circle {
+        width: 400px;
+        height: 400px;
+    }
+
+    /* ---------------- Secció article Tablet >568px ---------------- */
+    /* ---------------- Secció article Tablet >568px ---------------- */
+    /* ---------------- Secció article Tablet >568px ---------------- */
+
+    .article {
+        /*height: 100vh;*/
+        /*padding: 150px 0;*/
+        /*max-width: 80vw;*/
+        /*margin: 0 auto;*/
+
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        /*grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;*/
+
+        /*grid-auto-rows: 100px;*/
+        column-gap: 10px;
+        row-gap: 10px;
+    }
+
+    .article_items--t1 {
+        /*background-color: red;*/
+        grid-column: 1/13;
+        /*grid-row: 1/4;*/
+    }
+    .text1 {
+        font-size: 10rem;
+        line-height: 10rem;
+        /*text-align: center;*/
+    }
+
+    .article_items--t2 {
+        /*max-width: 80vw;*/
+        /*background-color: #ffa1f9;*/
+        grid-column: 1/13;
+        /*grid-row: 4/8;*/
+    }
+    .text2 {
+        font-size: 26px;
+        line-height: 28px;
+    }
+
+    .article_items--t3 {
+        /*max-width: 80vw;*/
+
+        /*background-color: yellow;*/
+        grid-column: 1/9;
+        /*grid-row: 7/11;*/
+    }
+    .text3 {
+        font-size: 16px;
+        line-height: 18px;
+    }
+
+    .article_items--t4 {
+        /*background-color: antiquewhite;*/
+        grid-column: 1/6;
+        /*grid-row: 11/13;*/
+    }
+    .text4 {
+        font-size: 12px;
+        line-height: 14px;
+    }
+
+    .article_items--t5 {
+        /*background-color: orange;*/
+        grid-column: 6/11;
+        /*grid-row: 11/13;*/
+    }
+    .text5 {
+        font-size: 12px;
+        line-height: 14px;
+    }
+
+    .article_items--t6 {
+        grid-column: 9/13;
+        grid-row: 3/4;
+        /*z-index: -1;*/
+    }
+    .img6 {
+        /*max-width: 50vw;*/
+        height: 70%;
+        object-fit: cover;
+        filter: saturate(0);
+    }
+    .article_items--t7 {
+        background-color: white;
+        /*display: grid;*/
+        /*top: -230px;*/
+        /*height: 100px;*/
+        grid-column: 10/13;
+        grid-row: 1/4;
+        transform: rotate(15deg);
+        z-index: -2;
+    }
+
+    /*
+img7{
+     background-color: white;
+ width: 100px;
+    height: 100px;
+}
+*/
+}
+
+/* ------------------------------ A partir de 700px ------------------------------ */
+
+@media (min-width: 700px) {
+    .nav-right {
+        width: 50%;
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        gap: 50px;
+    }
+
+    .logo_link-toggle {
+        width: 30px;
+        height: 30px;
+        background-size: 28px;
+    }
+    .title_container_left {
+        width: 100%;
+    }
+    .poster {
+        padding: 140px 0;
+    }
+    .poster_paragraph {
+        text-align: center;
+        font-size: clamp(9rem, 7vw + 1rem, 6rem);
+        line-height: clamp(9.7rem, 6vw + 1rem, 6rem);
+    }
+    .poster_figures {
+        width: 65%;
+    }
+
+    /*----------------------------- Baselines Section Tablet ------------------------------*/
+    /*----------------------------- Baselines Section Tablet ------------------------------*/
+    /*----------------------------- Baselines Section Tablet ------------------------------*/
+
+    .baselines {
+        margin-bottom: 70px;
+        margin-top: 300px;
+    }
+
+    .baselines_paragraph {
+        font-size: 1.8rem;
+        line-height: 1.9rem;
+        color: white;
+    }
+
+    /* ---------------- Secció Ligatures ---------------- */
+    /* ---------------- Secció Ligatures ---------------- */
+    /* ---------------- Secció Ligatures ---------------- */
+    .ligatures {
+        margin-top: 300px;
+        margin-bottom: 100px;
+    }
+    .Ligatures_text {
+        margin-bottom: 100px;
+    }
+}
+
+/* ------------------------------ A partir de 721px ------------------------------ */
+
+/* ----------------------- DESKTOP FOOTER ----------------------- */
+/* ----------------------- DESKTOP FOOTER ----------------------- */
+/* ----------------------- DESKTOP FOOTER ----------------------- */
+
+@media (min-width: 721px) {
+    .getfont {
+        flex-direction: row;
+        align-items: center;
+        gap: 18px;
+        justify-content: space-between;
+    }
+
+    .getfont__arrow {
+        transform: translateY(0);
+    }
+    .getfont:hover .getfont__arrow {
+        transform: rotate(90deg);
+    }
+
+    .footer-meta {
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .footer-links {
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    .footer-right {
+        justify-content: flex-end;
+    }
+}
+
+/* -------------------- S'activarà als 900px o més-------------------- */
+
+@media (width >=900px) {
+    /*----------------------------- Design_features Section Desktop ------------------------------*/
+    /*----------------------------- Design_features Section Desktop ------------------------------*/
+    /*----------------------------- Design_features Section Desktop ------------------------------*/
+
+    .design_features {
+        /*height: 70vh;*/
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        /*justify-content: space-between;*/
+        /*gap: 7vw;*/
+        margin-bottom: 120px;
+    }
+
+    .vector_image {
+        width: 45vw;
+        /*padding-top: 50px;*/
+    }
+
+    .weight_image {
+        width: 45vw;
+        padding-left: 100px;
+    }
+
+    /*----------------------------- Baselines Section Desktop ------------------------------*/
+    /*----------------------------- Baselines Section Desktop ------------------------------*/
+    /*----------------------------- Baselines Section Desktop ------------------------------*/
+
+    .baselines_text {
+        right: 50px;
+        bottom: 40px;
+        mix-blend-mode: exclusion;
+    }
+
+    /* ---------------- Secció article Tablet >900px ---------------- */
+    /* ---------------- Secció article Tablet >900px ---------------- */
+    /* ---------------- Secció article Tablet >900px ---------------- */
+
+    .article {
+        /*background-color: rgba(0, 255, 255, 0.23);*/
+        /*max-width: 1200px;*/
+        max-width: 100vw;
+        /*margin: 0 auto;*/
+
+        margin: 220px 0 150px 0;
+
+        /*height: 100vh;*/
+
+        /*padding: 150px 0;*/
+
+        /*background-color: rgba(38, 38, 38, 0.16);*/
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+
+        /*grid-auto-rows: 100px;*/
+        column-gap: 10px;
+        row-gap: 10px;
+    }
+
+    .article_items--t1 {
+        /*grid-area: item1;*/
+        /*background-color: red;*/
+        grid-column: 1/5;
+        grid-row: 1/4;
+    }
+    .text1 {
+        font-size: 12rem;
+        line-height: 4rem;
+    }
+
+    .article_items--t2 {
+        /*grid-area: item2;*/
+        /*background-color: #ffa1f9;*/
+        grid-column: 1/10;
+        grid-row: 4/8;
+    }
+    .text2 {
+        font-size: 26px;
+        line-height: 28px;
+    }
+
+    .article_items--t3 {
+        /*grid-area: item3;*/
+        /*background-color: yellow;*/
+        grid-column: 2/9;
+        grid-row: 7/11;
+    }
+    .text3 {
+        font-size: 16px;
+        line-height: 18px;
+    }
+
+    .article_items--t4 {
+        /*grid-area: item4;*/
+        /*background-color: orange;*/
+        grid-column: 2/6;
+        grid-row: 10/13;
+    }
+    .text4 {
+        font-size: 12px;
+        line-height: 14px;
+    }
+
+    .article_items--t5 {
+        /*grid-area: item5;*/
+        /*background-color: #ffdb98;*/
+        grid-column: 6/10;
+        grid-row: 10/13;
+    }
+    .text5 {
+        font-size: 12px;
+        line-height: 14px;
+    }
+
+    .article_items--t6 {
+        /*grid-area: item6;*/
+        grid-column: 9/12;
+        grid-row: 5/9;
+        z-index: -1;
+    }
+    .img6 {
+        /*background-color: aqua;*/
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: saturate(0);
+    }
+    .article_items--t7 {
+        background-color: white;
+        grid-column: 7/12;
+        grid-row: 4/10;
+        transform: rotate(15deg);
+        z-index: -2;
+        display: block;
+    }
+
+    /* ------------- Secció Character Set TABLET -------------- */
+    .page {
+        padding: 28px;
+    }
+    .glyphs__grid {
+        grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    }
+
+    .page {
+        width: 100%;
+        padding: 24px;
+    }
+}
+
+/* ---------------- Secció IN USE DESKTOP >1024px ---------------- */
+
+@media (min-width: 1024px) {
+    :root {
+        --pad: 48px;
+    }
+
+    .inuse {
+        height: 100vh; /* requirement */
+        padding: 64px 0 46px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* hide mobile stack */
+    .inuse__stack {
+        display: none;
+    }
+
+    .inuse__title {
+        margin: 0;
+        text-align: center;
+    }
+
+    .inuse__carousel {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: center;
+        gap: 30px;
+        padding-top: 26px;
+        overflow-x: hidden;
+    }
+
+    .inuse__viewport {
+        width: 100vw;
+        overflow-x: auto;
+        overflow-y: hidden;
+        cursor: grab;
+        /* remove iOS/trackpad bounce feeling a bit */
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: auto;
+    }
+
+    .inuse__viewport:active {
+        cursor: grabbing;
+    }
+
+    /* Hide scrollbars */
+    .inuse__viewport {
+        scrollbar-width: none; /* Firefox */
+    }
+    .inuse__viewport::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+    }
+
+    .inuse__track {
+        display: flex;
+        align-items: center;
+        gap: 48px;
+        padding: 0 10vw; /* grey margins left/right like design */
+        width: max-content;
+    }
+
+    .inuse__slide {
+        margin: 0;
+        flex: 0 0 auto;
+        /* Key: ~2/3 viewport so the next slide is half visible */
+        width: clamp(720px, 56vw, 980px);
+    }
+
+    .inuse__slide img {
+        display: block;
+        width: 100%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+        pointer-events: none; /* drag controlled by viewport */
+    }
+
+    .inuse__hint {
+        margin: 0;
+        text-align: center;
+        font-size: 12px;
+        opacity: 0.65;
+    }
+}
+
+/* -------------------- S'activarà als 1072px o més-------------------- */
+
+@media (width >=1072px) {
+    .poster {
+        margin-bottom: 50px;
+    }
+
+
+    .title_main {
+        font-size: clamp(16rem, 6vw + 1rem, 6rem);
+        /*max-width: 2025px;*/
+        line-height: clamp(6rem, 6vw + 1rem, 6rem);
+    }
+    .hero_figure {
+        width: 30%;
+        height: 80vh;
+        right: 237px;
+        top: 10%;
+        background-image: none;
+        /*background-image: url(assets/img/danholdsworth-485-q80-w1350-h900-rz3-b75.jpg);*/
+        background-color: white;
+        left: auto;
+        background-position: center center;
+        display: block;
+        /*opacity: 50%;*/
+    }
+    .paragraph {
+        width: 60vw;
+        font-size: 1.8em;
+        line-height: 1.3em;
+    }
+    .columnes {
+        padding-top: 220px;
+        flex-direction: row;
+        /*height: 50vh;*/
+        align-items: flex-end;
+        gap: 0;
+        padding-right: 5px;
+        /*height: 70vh;*/
+    }
+
+    .columna {
+        display: flex;
+        flex-direction: column;
+        width: 33%;
+        /*align-self: flex-end;*/
+        height: 36vh;
+        text-wrap: wrap;
+        /*background-color: red;*/
+        justify-content: space-between;
+    }
+    .columna_1_text {
+        position: relative;
+        top: 70px;
+    }
+    .poster_figure {
+        margin-top: 150px;
+        z-index: 1;
+        display: block;
+    }
+
+    .poster_figure_two {
+        display: block !important;
+        left: 15px;
+    }
+    .poster_figure_greetings {
+        display: block !important;
+    }
+}
+
+/*-------------------- S'activarà als 1125px o més -------------------- */
+
+/* --------------- Secció Tester Desktop --------------- */
+/* --------------- Secció Tester Desktop --------------- */
+/* --------------- Secció Tester Desktop --------------- */
+
+@media (min-width: 1125px) {
+    :root {
+        --pad-x: 20px;
+        --font-size: 130px;
+        --line-height: 0.95;
+    }
+
+    .fontname__desktop {
+        display: inline;
+    }
+    .fontname__mobile {
+        display: none;
+    }
+
+    .align {
+        display: inline-flex;
+    }
+
+    /* Desktop shows the full control row */
+    .controls__panel {
+        position: static;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 34px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .tester[data-panel-open="true"] .controls__panel {
+        display: flex;
+    }
+
+    /* Pangram back beside Tracking (center group) */
+    .pangram__label {
+        display: inline;
+    }
+    .pangram--desktop {
+        display: inline-flex;
+    }
+    .pangram--top {
+        display: none;
+    }
+
+    .stage {
+        padding: 80px var(--pad-x) 80px;
+        gap: 40px;
+    }
+
+    .text {
+        text-align: left;
+        /*color:blue;*/
+    }
+}
+
+/* -------------------- S'activarà als 1200px o més-------------------- */
+
+@media (min-width: 1200px) {
+    /* ------------- Secció Character Set DESKTOP -------------- */
+
+    /* Match your desktop mockup: 50vw glyph table + 50vw white frame */
+    .page {
+        padding: 20px 20px;
+    }
+
+    .character-set__layout {
+        display: flex;
+        gap: 0;
+    }
+
+    .glyphs__grid {
+        width: 50vw;
+        grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+        border-right: 0;
+    }
+
+    .preview--desktop {
+        display: block;
+        width: 50vw;
+        position: sticky;
+        top: 0;
+        border-top: 1px solid #262626;
+        border-right: 1px solid #262626;
+        border-bottom: 1px solid #262626;
+        border-left: 1px solid #262626;
+    }
+
+    .preview__frame {
+        width: 100%;
+        height: 100vh;
+        min-height: 0;
+        max-width: none;
+        max-height: none;
+        /*border-left: 1px solid var(--border);*/
+        border-right: 0;
+        border-top: 0;
+        border-bottom: 0;
+    }
+
+    .preview--floating {
+        display: none;
+    }
+}
+
+/* -------------------- S'activarà als 1272px o més-------------------- */
+
+@media (width >=1272px) {
+    /* Removed empty columna_size_* rules (legacy comments only) */
+
+    /* ---------------- Secció article Tablet >1272px ---------------- */
+    /* ---------------- Secció article Tablet >1272px ---------------- */
+    /* ---------------- Secció article Tablet >1272px ---------------- */
+
+    .article_items--t3 {
+        /*grid-area: item3;*/
+        /*background-color: yellow;*/
+        grid-column: 2/7;
+        grid-row: 7/11;
+    }
+
+    .article_items--t7 {
+        background-color: white;
+        grid-column: 9/12;
+        grid-row: 4/10;
+        transform: rotate(109deg);
+        z-index: -2;
+        display: block;
+    }
+
+    .text1 {
+        font-size: 14rem;
+        line-height: 4rem;
+    }
+
+    .text2 {
+        font-size: 28px;
+        line-height: 30px;
+    }
+}
+
+@media (width >=1472px) {
+    /* --------- Hero -------- */
+    .title_main {
+        font-size: clamp(18rem, 6vw + 1rem, 6rem);
+        /*max-width: 2025px;*/
+        line-height: clamp(6rem, 6vw + 1rem, 6rem);
+    }
+    .columna_2_text_mobile {
+        display: none;
+    }
+    .columna_2_text_desktop {
+        display: block;
+    }
+
+    .columna_3_text_mobile {
+        display: none;
+    }
+    .columna_3_text_desktop {
+        display: block;
+    }
+
+    /* Removed empty columna_size_* rules (legacy comments only) */
+    .poster {
+        padding: 160px 0;
+    }
+    .alternates_title {
+        font-size: clamp(11rem, 6vw + 1rem, 6rem);
+        line-height: clamp(11rem, 6vw + 1rem, 6rem);
+    }
+
+    /* ---------------- Secció article Desktop >1472px ---------------- */
+    /* ---------------- Secció article Desktop >1472px ---------------- */
+    /* ---------------- Secció article Desktop >1472px ---------------- */
+
+    .article {
+        /*background-color: rgba(0, 255, 255, 0.23);*/
+        /*max-width: 1200px;*/
+        max-width: 100vw;
+        /*max-width: 1900px;*/
+        /*margin: 0 auto;*/
+        margin: 0 auto;
+        margin-top: 100px;
+        margin-bottom: 20px;
+        /*height: 100vh;*/
+        /*padding: 150px 0;*/
+        /*background-color: rgba(38, 38, 38, 0.16);*/
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        /*grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;*/
+        /*grid-auto-rows: 100px;*/
+        column-gap: 10px;
+        /*row-gap: 10px;*/
+    }
+
+    .article_items--t1 {
+        /*grid-area: item1;*/
+        /*background-color: red;*/
+        grid-column: 1/5;
+        grid-row: 2/5;
+    }
+    .text1 {
+        font-size: 16rem;
+        line-height: 14rem;
+    }
+
+    .article_items--t2 {
+        /*grid-area: item2;*/
+        /*background-color: #ffa1f9;*/
+        grid-column: 1/10;
+        grid-row: 5/8;
+    }
+    .text2 {
+        font-size: 2.8rem;
+        line-height: 3rem;
+    }
+
+    .article_items--t3 {
+        /*grid-area: item3;*/
+        /*background-color: yellow;*/
+        grid-column: 2/7;
+        grid-row: 8/10;
+    }
+    .text3 {
+        font-size: 20px;
+        line-height: 22px;
+    }
+
+    .article_items--t4 {
+        /*grid-area: item4;*/
+        /*background-color: orange;*/
+        grid-column: 2/5;
+        grid-row: 10/13;
+    }
+    .text4 {
+        font-size: 13px;
+        line-height: 15px;
+    }
+
+    .article_items--t5 {
+        /*grid-area: item5;*/
+        /*background-color: #ffdb98;*/
+        grid-column: 5/8;
+        grid-row: 10/13;
+    }
+    .text5 {
+        font-size: 13px;
+        line-height: 15px;
+    }
+
+    .article_items--t6 {
+        /*grid-area: item6;*/
+        grid-column: 8/12;
+        grid-row: 6/10;
+        z-index: -1;
+    }
+    .img6 {
+        /*background-color: aqua;*/
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: saturate(0);
+    }
+    .article_items--t7 {
+        background-color: white;
+        grid-column: 9/12;
+        grid-row: 4/10;
+        transform: rotate(15deg);
+        z-index: -2;
+        display: block;
+    }
+}
+/*
+
+.fl_ligature {
+    position: absolute;
+    z-index: 100;
+    width: 100px;
+    height: 150px;
+    background-color: aqua;
+    transform: rotate(22deg) translateY(141px) translateX(204px);
+    right: 360px;   
+}
+*/
+
+@media (width >=1872px) {
+    /* --------- Hero -------- */
+    .title_main {
+        font-size: clamp(26rem, 6vw + 1rem, 6rem);
+        /*max-width: 2025px;*/
+        line-height: clamp(6rem, 6vw + 1rem, 6rem);
+        /*letter-spacing: -25px;*/
+    }
+    .title_hero {
+        font-size: clamp(2rem, 1vw + 1rem, 1.8rem);
+        line-height: 6rem;
+    }
+    .paragraph {
+        width: 55vw;
+        font-size: 2.4em;
+        line-height: 1.2em;
+        /*background-color: antiquewhite;*/
+    }
+
+    /* ------------- Sizes --------------- */
+
+    .columna_2_text_mobile {
+        display: none;
+    }
+    .columna_2_text_desktop {
+        display: none;
+    }
+    .columna_2_text_desktop_big {
+        display: block;
+    }
+    .columna_3_text_mobile {
+        display: none;
+    }
+    .columna_3_text_desktop {
+        display: none;
+    }
+    .columna_3_text_desktop_big {
+        display: block;
+    }
+    .columna_1_text {
+        position: relative;
+        top: 138px;
+        font-size: 350px;
+    }
+
+    /* ---------- Poster --------- */
+    .poster_figures {
+        width: 45%;
+    }
+    .poster_paragraph {
+        text-align: center;
+        font-size: clamp(11.8rem, 7vw + 1rem, 6rem);
+        line-height: clamp(12.5rem, 6vw + 1rem, 6rem);
+    }
+
+    /* -------------- Alternates ------------- */
+    .alternates_title {
+        font-size: clamp(16rem, 6vw + 1rem, 6rem);
+        line-height: clamp(16rem, 6vw + 1rem, 6rem);
+    }
+
+    /* -------------- Main ------------- */ 
+.sentence_paragraph {
+    font-size: 6.7vw;
+    line-height: 7.3vw;
+}
+
+
+/* ---------------- Secció article Desktop >1872px ---------------- */
+    /* ---------------- Secció article Desktop >1872px ---------------- */
+    /* ---------------- Secció article Desktop >1872px ---------------- */
+
+    
+    .text1 {
+        font-size: 13.5vw;
+    }
+
+    .text2 {
+        font-size: 2.5vw;
+        line-height: 2.7vw;
+    }
+
+    .text3 {
+        font-size: 1vw;
+        line-height: 1.3vw;
+    }
+   
+    .text4 {
+        font-size: 0.6vw;
+        line-height: 0.8vw;
+    }
+
+    .text5 {
+        font-size: 0.6vw;
+        line-height: 0.8vw;
+    }
+
+    /* ---------------- Footer Desktop >1872px ---------------- */
+    /* ---------------- Footer Desktop Desktop >1872px ---------------- */
+    /* ---------------- Footer Desktop Desktop >1872px ---------------- */
+.getfont {
+    font-size: 12.8vw;
+}
+
+}
+
+
+
